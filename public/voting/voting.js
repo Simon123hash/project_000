@@ -10,7 +10,10 @@ angular.module('VBattle.voting', [])
   //socket.emit() when need for new chats
   //socket.on() for getting latest chats -> storing them in the localstorage
   //and getting rid of them after user voted
+  
   $scope.upvote = function (input) {
+
+    //todo: get more than one completed rooms.
     console.log("upvoting for", input);
     //getting next messages object from local storage and removing the old one
     $scope.messages = $scope.newMessages;
@@ -18,13 +21,13 @@ angular.module('VBattle.voting', [])
 
   $scope.getVotes = function () {
     //judging route
-   // var rooms = window.localStorage["voteRooms"] || {};
+   // getting 
     Voter.getRooms().then( function (result) {
     if (result.data[0]) {
-    $scope.roomID = result.data[0].id;
-    $scope.messages = result.data[0].messages;
-    console.log($scope.messages);
-    window.localStorage["voteRooms"] = JSON.stringify(result.data);  
+     $scope.roomID = result.data[0].id;
+     $scope.messages = result.data[0].messages;
+     console.log($scope.messages);
+     window.localStorage["voteRooms"] = JSON.stringify(result.data);  
     //$scope.getNext();
     }
 
