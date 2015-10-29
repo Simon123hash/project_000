@@ -6,11 +6,11 @@ angular.module('VBattle.lobby', [])
   var user = JSON.parse(window.localStorage['user']);
   mySocket.on('client:joinRoom', function (data) {
     console.log("join-room update", data);
-    //storing this data in the local storage -> 
+    // storing this data in the local storage -> 
     console.log("localStorage", window.localStorage);
-    //getting the rooms object from the data we receive from the socket
+    // getting the rooms object from the data we receive from the socket
     var rooms = data[Object.keys(data)[0]];
-    //getting the roomId of the updating room
+    
     var roomID = Object.keys(rooms)[0];
 
     var myAvatarID;
@@ -19,24 +19,29 @@ angular.module('VBattle.lobby', [])
     } else if (rooms[roomID].avatar2.avatarID in user.avatars) {
       myAvatarID = rooms[roomID].avatar2.avatarID;
     }
-    console.log(myAvatarID);
-    console.log("user first", user);
+
     if (user.avatars[myAvatarID].rooms) {
       console.log("this is the thing i want to know", user.avatars[myAvatarID].rooms);
-      //if the users current avatar object already has a room object add the roomUpdate at the new roomID
+      // if the users current avatar object already has a room object add the roomUpdate at the new roomID
       user.avatars[myAvatarID].rooms[roomID] = data.rooms;
       window.localStorage['user'] = JSON.stringify(user);
     } else {
-      //if the users avatar does not have a room object at the avatar that got into the room we create a roomObject 
-      //and add the updateRoom to it
+      // if the users avatar does not have a room object at the avatar that got into the room we create a roomObject 
+      // and add the updateRoom to it
       user.avatars[myAvatarID].rooms = {};
       user.avatars[myAvatarID].rooms[roomID] = data.rooms[roomID];
       console.log("put in user, user last", user);
+      // put user back into local storage so that we have access to it after we left the page
       window.localStorage['user'] = JSON.stringify(user);
     }
+
+    // putting new room into the scope avatars object, so that it can kick a live update
     if (!$scope.avatars[myAvatarID].rooms) {
       $scope.avatars[myAvatarID].rooms = {};
       console.log(Object.keys(rooms)[0], "object.keys(rooms)[0] is");
+      $scope.avatars[myAvatarID].rooms[Object.keys(rooms)[0]] = data.rooms[Object.keys(data.rooms)[0]];
+    } else {
+      // if concerned avatar already has a room property put new room in there
       $scope.avatars[myAvatarID].rooms[Object.keys(rooms)[0]] = data.rooms[Object.keys(data.rooms)[0]];
     }
   });
